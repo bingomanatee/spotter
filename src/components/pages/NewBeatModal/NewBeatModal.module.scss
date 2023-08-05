@@ -1,0 +1,14 @@
+
+.container {
+
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: [start] max(150px, 33%) [input] 1fr [end];
+  grid-auto-rows: auto;
+  grid-column-gap: 6px;
+  grid-row-gap: 16px;
+  align-items: center;
+  align-content: center;
+}

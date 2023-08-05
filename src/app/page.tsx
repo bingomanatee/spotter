@@ -1,95 +1,39 @@
-import Image from 'next/image'
-import styles from './page.module.css'
+"use client"
+// import styles from './page.module.css'
+import { Box, Heading, Spinner } from '@chakra-ui/react'
+
+import actState from '~/lib/actState'
+import Acts from '~/components/pages/Acts'
+import useForestFiltered from '~/components/utils/useForestFiltered'
+import NewBeatModal from '~/components/pages/NewBeatModal/NewBeatModal'
+import { useEffect } from 'react'
+import NewActModal from '~/components/pages/NewActModal/NewActModal'
 
 export default function Home() {
+
+  const { loadState, newBeat, newAct } = useForestFiltered(actState,
+    ['loadState', 'acts', 'newBeat', 'newAct']);
+
+  useEffect(() => {
+    actState.do.init();
+  }, [])
   return (
-    <main className={styles.main}>
-      <div className={styles.description}>
-        <p>
-          Get started by editing&nbsp;
-          <code className={styles.code}>src/app/page.tsx</code>
-        </p>
-        <div>
-          <a
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className={styles.vercelLogo}
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
-
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className={styles.grid}>
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Docs <span>-&gt;</span>
-          </h2>
-          <p>Find in-depth information about Next.js features and API.</p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Learn <span>-&gt;</span>
-          </h2>
-          <p>Learn about Next.js in an interactive course with&nbsp;quizzes!</p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Templates <span>-&gt;</span>
-          </h2>
-          <p>Explore the Next.js 13 playground.</p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className={styles.card}
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2>
-            Deploy <span>-&gt;</span>
-          </h2>
-          <p>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
+    <Box layerStyle="page-frame">
+      <Box flex={0}>
+        <Heading variant="page-head">Spotter Track Sheet</Heading>
+        {newBeat.context ? <Box position="absolute" top="4em" right="4em" width="300px">
+          {`newBeat: ${newBeat.context} : ${newBeat.id} `}
+        </Box> : null}
+        {newAct.context ?<Box position="absolute" top="4em" right="4em" width="300px">
+          {`newAct: ${newAct.context} : ${newAct.id} `}
+        </Box> : null}
+      </Box>
+      <Box flex={1} overflowY="auto">
+        {loadState === 'loading' ? <Spinner size="xl"/> : ''}
+        {loadState === 'loaded' ? <Acts/> : ''}
+      </Box>
+      {newBeat.context ? <NewBeatModal context={newBeat.context} id={newBeat.id}/> : null}
+      {newAct.context ? <NewActModal context={newAct.context} id={newAct.id}/> : null}
+    </Box>
   )
 }

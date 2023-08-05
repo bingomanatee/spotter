@@ -1,0 +1,19 @@
+
+.previs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 350px);
+  grid-auto-rows: 200px;
+  grid-gap: 12px;
+  width: 100%;
+  padding: 10px 20px;
+}
+
+.background {
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-repeat: no-repeat;
+  background-size: cover;
+  position: absolute;
+}

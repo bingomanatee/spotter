@@ -5,7 +5,7 @@ import dayjs from 'dayjs'
 
 
 export default class BeatModel {
-  constructor(private readonly id: number | Beat, actId?: number) {
+  constructor(public readonly id: number | Beat, actId?: number) {
     if (isBeat(id)) {
       this.beat = id;
       if (actId) {
@@ -33,7 +33,7 @@ export default class BeatModel {
     }
   }
 
-  private readonly beat: Beat | null
+  public readonly beat: Beat | null
   public act: Act | null;
 
   get name(): string {
@@ -72,8 +72,12 @@ export default class BeatModel {
   }
 
   get endSecond() : number {
-    if (!this.startTime) return 0;
+    if (!this.endTime) return 0;
     return this.endTime.asSeconds();
+  }
+  get startSecond() : number {
+    if (!this.startTime) return 0;
+    return this.startTime.asSeconds();
   }
 
 }

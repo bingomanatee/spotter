@@ -128,7 +128,31 @@ const actState = new Forest({
       }
 
       const actBeats = beats.get(actId) || [];
-      return { act, beats: actBeats };
+      const beatModels: BeatModel[] = actBeats.map((beat) => {
+        return new BeatModel(beat);
+      }).sort((m1, m2) => {
+        return m1.startSecond - m2.startSecond
+      });
+
+      const { startTime, endTime } = beatModels.reduce((memo, model) => {
+        let { startTime, endTime } = memo;
+        if ((!startTime) || (startTime.asSeconds() > model.startSecond)) {
+          startTime = model.startTime;
+        }
+        if ((!endTime) || endTime.asSeconds() < model.endSecond) {
+          endTime = model.endTime;
+        }
+        return { startTime, endTime }
+      }, {});
+      let startSeconds = startTime ? startTime.asSeconds() : 0;
+      let endSeconds = endTime ? endTime.asSeconds() : 0;
+      return {
+        act,
+        beats: actBeats,
+        beatModels: beatModels,
+        startTime, endTime,
+        startSeconds, endSeconds
+      };
     },
     /**
      * returns either a "context object" with the beat, its act, and its's aats beats,
@@ -160,9 +184,9 @@ const actState = new Forest({
         return { beat };
       }
 
-      let { act, beats } = state.$.act(actId);
+      let { act } = state.$.act(actId, true);
 
-      return { beat, act, beats };
+      return { beat, act, beats: state.value.beats.get(actId) };
     }
   },
 

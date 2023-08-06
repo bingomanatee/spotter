@@ -1,3 +1,5 @@
+"use client"
+
 import { leafI } from '@wonderlandlabs/forest/lib/types'
 import { useCallback, useEffect, useState } from 'react'
 import { c } from '@wonderlandlabs/collect'

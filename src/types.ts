@@ -29,3 +29,12 @@ export const isPromise = (input: any): input is Promise<any> => {
     && (typeof input.catch === 'function')
     && (typeof input.finally === 'function')
 }
+
+export type Project = {
+  id: string,
+  user_id: string,
+  order: Number,
+  created: string,
+  name: string,
+  active: number,
+}

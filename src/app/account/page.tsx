@@ -1,12 +1,13 @@
 "use client"
+
 // import styles from './page.module.css'
 import { SUPABASE_CLIENT_KEY, userManager } from '~/lib/userManager'
-import Welcome from '~/components/Welcome'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
+import Welcome from '~/components/Welcome'
 import { useRouter } from 'next/navigation'
 import { useEffect } from 'react'
 
-export default function Home() {
+export default function Account() {
   const router = useRouter()
   useEffect(() => {
     if (userManager.getMeta(SUPABASE_CLIENT_KEY)) {

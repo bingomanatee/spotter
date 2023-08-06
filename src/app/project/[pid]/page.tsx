@@ -11,38 +11,15 @@ import NewActModal from '~/components/pages/NewActModal/NewActModal'
 import { userManager } from '~/lib/userManager'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
+import ProjectEdit from '~/app/project/[pid]/ProjectEdit'
 
-export default function ProjectView() {
+export default function ProjectView({params}) {
   const router = useRouter()
-
+console.log('project view props', params)
   useEffect( () => {
     const supabase = createClientComponentClient();
     userManager.do.init(supabase, router)
   }, [router])
 
-  const { loadState, newBeat, newAct } = useForestFiltered(actState,
-    ['loadState', 'acts', 'newBeat', 'newAct']);
-
-  useEffect(() => {
-    actState.do.init();
-  }, [])
-  return (
-    <Box layerStyle="page-frame">
-      <Box flex={0}>
-        <Heading variant="page-head">Spotter Track Sheet</Heading>
-        {newBeat.context ? <Box position="absolute" top="4em" right="4em" width="300px">
-          {`newBeat: ${newBeat.context} : ${newBeat.id} `}
-        </Box> : null}
-        {newAct.context ?<Box position="absolute" top="4em" right="4em" width="300px">
-          {`newAct: ${newAct.context} : ${newAct.id} `}
-        </Box> : null}
-      </Box>
-      <Box flex={1} overflowY="auto">
-        {loadState === 'loading' ? <Spinner size="xl"/> : ''}
-        {loadState === 'loaded' ? <Acts/> : ''}
-      </Box>
-      {newBeat.context ? <NewBeatModal context={newBeat.context} id={newBeat.id}/> : null}
-      {newAct.context ? <NewActModal context={newAct.context} id={newAct.id}/> : null}
-    </Box>
-  )
+  return <ProjectEdit projectId ={params?.pid}/>
 }

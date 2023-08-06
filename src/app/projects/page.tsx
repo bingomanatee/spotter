@@ -21,7 +21,6 @@ export default function Projects(props: ProjectsProps) {
     console.log('uff value is ', value);
     return value.user;
   });
-  console.log('PROJECTS')
 
   useEffect(() => {
     if (!userManager.getMeta(SUPABASE_CLIENT_KEY)) {
@@ -40,7 +39,7 @@ export default function Projects(props: ProjectsProps) {
 
   console.log('user = ', user, 'from', userManager.value);
 
-  let promptButton : JSXElement | null = <AddButton
+  let promptButton: JSXElement | null = <AddButton
     onClick={() => router.push('/project/add')}>
     Create a new Project
   </AddButton>;
@@ -50,11 +49,13 @@ export default function Projects(props: ProjectsProps) {
     promptButton = <SignInPrompt>Sign in to create a new project</SignInPrompt>
   }
 
-  return (<Box p={12}>
-    <HStack justifyContent="space-between" width="100%" alignItems="baseline">
-      <Heading>Projects</Heading>
-      {promptButton}
-    </HStack>
-    {loaded ? <ProjectsList projects={projects}/> : <Spinner size="xl"/>}
+  return (<Box layerStyle="page-frame">
+    <Box layerStyle="page-frame-inner">
+      <HStack justifyContent="space-between" width="100%" alignItems="baseline">
+        <Heading>Projects</Heading>
+        {promptButton}
+      </HStack>
+      {loaded ? <ProjectsList projects={projects}/> : <Spinner size="xl"/>}
+    </Box>
   </Box>);
 }

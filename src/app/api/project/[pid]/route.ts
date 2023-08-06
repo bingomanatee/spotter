@@ -5,12 +5,17 @@ import { NextResponse } from 'next/server'
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function POST(req, {params}) {
+export async function GET(req, { params }) {
+
+  if (!params?.pid) {
+    return NextResponse.json({ apiError: 'no project id' })
+  }
+
   const supabase = createRouteHandlerClient({ cookies });
   const { data, error: authError } = await supabase.auth.getSession()
 
   if (authError) {
-    return NextResponse.json({authError})
+    return NextResponse.json({ authError })
   }
 
   const user = data?.session.user;
@@ -19,14 +24,13 @@ export async function POST(req, {params}) {
     return NextResponse.json({ project: null })
   }
 
-  const project = await req.json();
-  console.log('creating project', project);
+  // ------------ validated user and id
+
 // @TODO: check for duplicates
   const response = await supabase
     .from('projects')
-    .insert({name: project.name, user_id: user.id})
-    .select();
-
+    .select()
+    .eq('id', params.pid)
 
   console.log('-=-- response:', response);
 
@@ -36,15 +40,25 @@ export async function POST(req, {params}) {
   }
 
   const {
-    error, data: newProjects
+    error, data: projects
   } = response;
-
-  if (Array.isArray(newProjects)) {
-    const [newProject] = newProjects
-    return NextResponse.json({ project: newProject });
-  }
   if (error) {
     return NextResponse.json({ error });
   }
-  return NextResponse.json({ error: 'irregular return' })
+
+  if (Array.isArray(projects)) {
+    const [project] = projects;
+
+    if (!project
+      || (project.user_id !== user.id)
+      || (!project.active)) {
+      // user doesn't own project (or project doesn't exist) (or is not active)
+      // -- send no evidence to client
+      return NextResponse.json({ project: null })
+    }
+
+    return NextResponse.json({ project });
+  }
+
+  return NextResponse.json({ error: 'irregular response' })
 }

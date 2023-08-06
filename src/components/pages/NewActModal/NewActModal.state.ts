@@ -1,16 +1,13 @@
 import { leafFn, leafI, typedLeaf } from '@wonderlandlabs/forest/lib/types'
-import { Act, Beat } from '~/types'
-import actState from '~/lib/actState'
+import { Act, Beat, NewBeat } from '~/types'
 import BeatModel from '~/utils/BeatModel'
 import dayjs from 'dayjs'
 import { DURATION } from '~/consts'
+import { dataManager } from '~/lib/dataManager'
 
 export type NewActModalStateValue = {
-  context: string,
-  id: number | null,
-  beat: BeatModel | null,
-  act: Act | null,
-  name: '',
+  name: string,
+  newBeats: NewBeat[],
 };
 
 type leafType = typedLeaf<NewActModalStateValue>;
@@ -18,20 +15,15 @@ type leafType = typedLeaf<NewActModalStateValue>;
 function newBeat(name) {
   return {
     name,
-    content: '',
     cameraAngle: 'front medium',
     duration: 10,
+    content: '',
     notes: '',
   }
 }
 
 const NewActModalState = (props) => {
-  console.log('new action state: ', props);
   const $value: NewActModalStateValue = {
-    context: props.context,
-    id: props.id,
-    beat: null, // the beat model preceding this one - can be null
-    act: null, // the act preceding this one
     newBeats: [],
     name: ''
   };
@@ -45,57 +37,17 @@ const NewActModalState = (props) => {
         const beat = state.value.newBeats[index];
         return beat && field in beat ? beat[field] : '';
       },
-
-      start(state: leafType) {
-        const { beat } = state.value;
-        if (!beat) {
-          return dayjs.duration(0, 's');
-        }
-        return beat.endTime;
-      },
-
-      end(state: leafType) {
-        const { newBeats } = state.value;
-        const start = state.$.start();
-        let time = start;
-        newBeats.forEach((beat) => {
-          time = time.add(beat.duration, 's');
-        });
-        return time;
-      },
-
-      isOpen(state: leafType) {
-        const { context, act } = state.value;
-        switch (context) {
-          case 'after-act':
-            return !!act;
-            break;
-        }
-        return false;
-      },
       newBeatsToSave(state: leafType) {
-        const {newBeats } = state.value;
-        let timeStamp = state.$.start();
-        return newBeats.filter((b) => !!b.name)
-          .map((beat) => {
-            const duration = beat.duration;
-            let endStamp = timeStamp.add(duration, 's');
-            let time = timeStamp.format('m:ss') + '-' + endStamp.format('m:ss');
-            timeStamp = endStamp;
-            let out = {...beat, time};
-            delete out.duration;
-            return out;
-          })
+        const { newBeats } = state.value;
+        return newBeats.filter((b) => !!b.name);
       }
     },
 
     actions: {
       setNewBeatField(state: leafType, e: MouseEvent, index: number, field: string) {
-        console.log('snob', e, index, field);
         const newBeats = [...state.value.newBeats];
         const newBeat = newBeats[index];
         if (!newBeat) {
-          console.log('cannot find new beat ', index);
           return;
         }
 
@@ -103,42 +55,31 @@ const NewActModalState = (props) => {
         if (field === DURATION) {
           value = Number(value);
         }
-        console.log('updated ', ...newBeats)
         newBeats[index] = { ...newBeat, [field]: value }
-        console.log('.... to ', ...newBeats);
         state.do.set_newBeats(newBeats);
       },
       close(state: leafType) {
-        actState.child('newAct')!.do.close();
+        if (props.onClose) {
+          props.onClose();
+        }
         state.do.reset();
       },
       reset(state: leafType, skipContext?: boolean) {
-        if (!skipContext) {
-          state.do.set_context('');
-          state.do.set_id(null);
-        }
         state.do.set_newBeats([]);
-        state.do.set_beat(null);
-        state.do.set_act(null);
+        state.do.set_name('');
       },
       init(state: leafType) {
-        const { context, id } = state.value;
         state.do.reset(true);
-        switch (context) {
-          case 'after-act':
-            state.do.set_act(actState.$.act(id, true).act);
-            state.do.set_beat(actState.$.lastBeat(id));
-            state.do.set_newBeats([
-              newBeat('Beat One'),
-              newBeat('Beat Two'),
-              newBeat('Beat Three')
-            ]);
-            break;
-        }
+
+        state.do.set_newBeats([
+          newBeat('Beat One'),
+          newBeat('Beat Two'),
+          newBeat('Beat Three')
+        ]);
       },
-      save(state: leafType) {
-        const {name} = state.value;
-        actState.do.addAct(name, state.$.newBeatsToSave());
+      async save(state: leafType) {
+        const { name} = state.value;
+        await dataManager.do.newActAndBeats({ name, project_id: props.pid }, state.$.newBeatsToSave());
         state.do.close();
       }
     }

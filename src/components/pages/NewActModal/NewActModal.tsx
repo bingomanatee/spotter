@@ -19,7 +19,7 @@ import useForestInput from '~/components/utils/useForestInput'
 import { NAME } from '~/consts'
 import { Beats } from '~/components/pages/NewActModal/Beats'
 
-type NewActModalProps = {}
+type NewActModalProps = {isOpen: boolean, pid: string, onClose?: () => void}
 
 export default function NewActModal(props: NewActModalProps) {
   const [value, state] = useForest([stateFactory, props],
@@ -27,29 +27,20 @@ export default function NewActModal(props: NewActModalProps) {
       localState.do.init();
     });
 
-  const { context, act } = value;
   const [name, setName] = useForestInput(state, NAME);
 
-  if (state.$.isOpen() && act) {
     return (
-      <Modal isOpen onClose={state.do.close} size="4xl">
+      <Modal isOpen={!!props.isOpen} onClose={state.do.close} size="4xl">
         <ModalOverlay/>
         <ModalContent width="75vw">
-          <ModalHeader>Add An Act after act &quot;{act.name} &quot;({act.id})</ModalHeader>
+          <ModalHeader>Add An Act</ModalHeader>
           <ModalCloseButton/>
           <ModalBody>
             <div className={styles.grid}>
               <Text textStyle="label">Name</Text>
               <Input value={name} onChange={setName}/>
-
-              <Text textStyle="label">span</Text>
-              <HStack>
-                <Text textStyle="info">{(state.$.start()?.format('m:ss')) || 0}</Text>
-                -
-                <Text textStyle="info">{(state.$.end()?.format('m:ss')) || 0}</Text>
-              </HStack>
             </div>
-            <Heading as="h3">Beats</Heading>
+            <Heading size="md">Beats</Heading>
             <Beats state={state}/>
           </ModalBody>
           <ModalFooter>
@@ -60,8 +51,5 @@ export default function NewActModal(props: NewActModalProps) {
           </ModalFooter>
         </ModalContent>
       </Modal>
-
-
     )
-  }
 }

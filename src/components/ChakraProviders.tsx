@@ -32,6 +32,16 @@ const tabsTheme = defineMultiStyleConfig({
   }
 });
 
+const PAGE_HEAD = {
+  as: 'h1',
+  size: 'lg',
+  fontSize: '3xl',
+  fontWeight: 300,
+  color: 'blackAlpha.600',
+  textAlign: 'center',
+  pb: 4
+}
+
 const PREVIS_PANEL = {
   bg: 'white',
   borderColor: 'blackAlpha.300',
@@ -57,6 +67,7 @@ const COLORS = {
   accent: 'hsl(30,100%,50%)',
   'add-green': 'hsl(170,100%,30%)',
   'add-green-disabled': 'hsla(170,50%,30%, 50%)',
+  'delete': 'hsl(0,100%,39%)',
   'add-green-dark': 'hsl(170,100%,15%)',
   'dark-accent': 'hsl(30,100%,33%)',
   'x-dark-accent': 'hsl(30,50%,25%)',
@@ -207,19 +218,23 @@ const COMPONENTS = {
         py: 2
       },
       'page-head': {
-        level: 1,
-        size: 'lg',
+        ...PAGE_HEAD
+      },
+      'page-subhead': {
+        ...PAGE_HEAD,
         fontSize: 'md',
-        color: 'blackAlpha.600',
-        textAlign: 'center',
-        pt: 8,
-        pb: 4
+        fontWeight: 400
+      },
+      'page-head-with-sub': {
+        ...PAGE_HEAD,
+        pb: 0
       }
     }
   },
   Text: {},
 };
 const TEXT_STYLES = {
+
   'list-item-head': {
     as: 'section',
     px: 4,

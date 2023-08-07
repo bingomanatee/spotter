@@ -36,7 +36,7 @@ export function Beats({ state }: { state: leafI }) {
       <Text textStyle="label-v">Seconds</Text>
       <Text textStyle="label-v">Camera Angle</Text>
     </div>
-    {newBeats.map((beat, index) => (<NewBeat key={beat.id} newBeat={beat} index={index} state={state}/>))}
+    {newBeats.map((beat, index) => (<NewBeat key={`${beat.name}-${index}`} newBeat={beat} index={index} state={state}/>))}
     <Text fontSize="xs" textStyle="info">Beats without names will not be added</Text>
   </div>
 }

@@ -7,7 +7,7 @@ import { Act } from '~/types'
 function ActHead({ act }: { act: Act }) {
   return (
     <Tr>
-      <Td isNumeric border="none"><Text textStyle="runsheet-head">{act.id}</Text></Td>
+      <Td border="none"><Text textStyle="runsheet-head">{act.id}</Text></Td>
       <Td border="none" colSpan={3}>
         <Text textStyle="runsheet-head"><b>&quot;{act.name}&quot;</b></Text>
       </Td>
@@ -27,8 +27,9 @@ function ActBeats({ actId }: { actId: number }) {
     {beats.map((beat) => (
       <Fragment key={beat.id}>
         <Tr>
-          <Td border="none" p={0} verticalAlign="top" rowSpan={2} isNumeric><Text
-            textStyle="runsheet">{beat.id}</Text></Td>
+          <Td border="none" p={0} verticalAlign="top" rowSpan={2}>
+            <Text textStyle="runsheet">{beat.id}</Text>
+          </Td>
           <Td border="none" p={0} verticalAlign="top" rowSpan={2}><Text textStyle="runsheet">{beat.time}</Text></Td>
           <Td border="none" p={0} verticalAlign="top"><Text textStyle="runsheet">{beat.name}</Text></Td>
           <Td border="none" p={0} verticalAlign="top"><Text textStyle="runsheet">{beat.cameraAngle}</Text></Td>
@@ -60,12 +61,13 @@ export default function Runsheet() {
           <Tr>
             <Th width="80px" border="none" rowSpan={2} px={0} verticalAlign="top"><Text
               textStyle="runsheet">ID</Text></Th>
-            <Th width="120px" border="none" rowSpan={2} px={0} verticalAlign="top"><Text textStyle="runsheet">Time</Text></Th>
+            <Th width="120px" border="none" rowSpan={2} px={0} verticalAlign="top"><Text
+              textStyle="runsheet">Time</Text></Th>
             <Th width="100%" border="none" px={0}><Text textStyle="runsheet">Name</Text></Th>
             <Th width="max(15%, 200px)" p={0} border="none"><Text textStyle="runsheet">Camera Angle</Text></Th>
           </Tr>
           <Tr>
-            <Th border="none" p={0} ><Text textStyle="runsheet">Content, Notes</Text></Th>
+            <Th border="none" p={0}><Text textStyle="runsheet">Content, Notes</Text></Th>
           </Tr>
         </Thead>
 

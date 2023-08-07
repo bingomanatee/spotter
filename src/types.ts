@@ -1,8 +1,9 @@
 import { NAME } from '~/consts'
 
 type DataRecord = {
-  id: number,
+  id: string  ,
   created_at: string,
+  active: boolean
 }
 
 export type NewAct = {
@@ -16,16 +17,22 @@ export type Act = {
 } & NewAct & DataRecord;
 
 export type NewBeat = {
-  "name": string,
-  "duration": number,
-  "content": string,
-  "cameraAngle": string,
-  "notes": string,
+  name: string,
+  duration: number,
+  content: string,
+  cameraAngle: string,
+  notes: string,
   order?: number,
+  act_id?: string,
+}
+
+export function isNewBeat(arg: any) : arg is NewBeat {
+  return !!(arg && typeof arg === 'object' && arg.name && 'duration' in arg )
 }
 
 export type Beat = {
-  order: number
+  order: number,
+  act_id: string,
 } & NewBeat & DataRecord;
 
 /**
@@ -41,14 +48,12 @@ export const isPromise = (input: any): input is Promise<any> => {
     && (typeof input.finally === 'function')
 }
 
-export type Project = {
-  id: string,
-  user_id: string,
-  order: Number,
-  created: string,
+export type NewProject = {
   name: string,
-  active: number,
 }
+
+export type Project = {user_id: string} & NewProject & DataRecord;
+
 
 export type User = {
   id: string,

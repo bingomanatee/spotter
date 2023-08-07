@@ -320,6 +320,17 @@ const LAYER_STYLES = {
     as: "header",
     zIndex: 100000,
   },
+  'act-ticket': {
+    borderWidth: '1px',
+    borderStyle: 'solid',
+    borderColor: 'teal.300',
+    px: 4,
+    py: 2,
+    my: 0.5,
+    boxShadow: 'lg',
+    w: '100%'
+  },
+
   'runsheet-cell': {
     p: 0,
     m: 0

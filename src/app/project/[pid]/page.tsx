@@ -12,13 +12,14 @@ import { userManager } from '~/lib/userManager'
 import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import ProjectEdit from '~/app/project/[pid]/ProjectEdit'
+import { dataManager } from '~/lib/dataManager'
 
 export default function ProjectView({params}) {
   const router = useRouter()
 console.log('project view props', params)
   useEffect( () => {
     const supabase = createClientComponentClient();
-    userManager.do.init(supabase, router)
+    userManager.do.init(supabase, router);
   }, [router])
 
   return <ProjectEdit projectId ={params?.pid}/>

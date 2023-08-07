@@ -13,7 +13,7 @@ import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { AddButton } from '~/components/AddButton'
 import { ExitButton } from '~/components/ExitButton'
-import  beep from 'browser-beep';
+import beep from 'browser-beep';
 import { dataManager } from '~/lib/dataManager'
 
 const beeper = beep({ frequency: 830 });
@@ -22,7 +22,7 @@ const beeper = beep({ frequency: 830 });
 export default function Home() {
   const router = useRouter()
 
-  useEffect( () => {
+  useEffect(() => {
     const supabase = createClientComponentClient();
     userManager.do.init(supabase, router)
   }, [router])
@@ -30,17 +30,25 @@ export default function Home() {
   const [name, setName] = useState('');
   const updateName = useCallback((e) => {
     setName(e.target?.value || '');
-  }, [setName])
+  }, [setName]);
+
+  const save = useCallback(async () => {
+    const project = await dataManager.child('projects')!.do.create({ name });
+    console.log('created ', project);
+    if (project?.id) {
+      router.push('/project/' + project.id);
+    }
+  }, [name]);
 
   return (
     <Box layerStyle="page-frame">
       <Box layerStyle="page-frame-inner">
-      <Heading>Create Project</Heading>
+        <Heading>Create Project</Heading>
         <HStack my={8} spacing={4}>
           <Text whiteSpace="nowrap" textStyle="label">Project Name</Text>
-          <Input required value={name} onChange={updateName} name="name" flex={1} />
+          <Input required value={name} onChange={updateName} name="name" flex={1}/>
           <AddButton
-            onClick={() => name ? dataManager.child('projects')!.do.create(name) : beeper()}
+            onClick={() => name ? save() : beeper()}
             disabled={!name}>Create Project</AddButton>
         </HStack>
         <Box m={10} w="100%" align="center">

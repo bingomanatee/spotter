@@ -1,59 +1,39 @@
-import { useState, useEffect, useCallback } from 'react';
-import styles from './ProjectEdit.module.scss';
+import { useEffect } from 'react';
 import stateFactory from './ProjectEdit.state.ts';
 import useForest from '~/components/utils/useForest'
-import { Box, Flex, Button, Heading, HStack, Spinner, Text, useDisclosure } from '@chakra-ui/react'
+import { Box, Heading } from '@chakra-ui/react'
 import useForestFiltered from '~/components/utils/useForestFiltered'
 import { userManager } from '~/lib/userManager'
-import dayjs from 'dayjs'
-import AddButtonIcon from '~/components/icons/AddButtonIcon'
-import { CloseIcon } from '@chakra-ui/icons'
-import { AddButton } from '~/components/AddButton'
-import NewActModal from '~/components/pages/NewActModal/NewActModal'
-
-type ProjectEditProps = { projectId: string }
-
-function ProjectTicket(props: { loaded: any, project: any, loafing: any }) {
-  const { loading, loaded, project } = props;
-
-  const {onOpen, isOpen, onClose} = useDisclosure()
-  if (!loaded) {
-    return loading ? <Spinner size="xl"/> : null;
-  }
-
-  if (!project) {
-    return <Text textStyle="info">Your project cannot be loaded</Text>
-  }
-
-  return <>
-    <Flex direction="row" justify="space-between" align="baseline">
-      <Box width="15%"> <Text>&quot;{project.name}&quot;</Text></Box>
-
-      <HStack spacing={6}>
-        <Button backgroundColor="white" leftIcon={<CloseIcon color="delete" />}>Delete</Button>
-        <AddButton onClick={onOpen}>Add Act</AddButton>
-      </HStack>
-
-      <Box width="15%" textAlign="right">
-        <Text textStyle="info">created {dayjs(project.created_at).format('MMMM D, YYYY')}</Text>
-      </Box>
-    </Flex>
-    <NewActModal isOpen={isOpen} onClose={onClose} pid={props.project.id} />
-  </>
-
-}
+import { ProjectTicket } from '~/app/project/[pid]/ProjectTicket'
+import { ProjectEditProps } from '~/app/project/[pid]/types'
+import { dataManager } from '~/lib/dataManager'
+import { c } from '@wonderlandlabs/collect'
 
 export default function ProjectEdit(props: ProjectEditProps) {
   const user = useForestFiltered(userManager, (value) => {
     console.log('uff value is ', value);
     return value.user;
   });
-  const [value, state] = useForest([stateFactory, props], () => {
+
+  const [value, state] = useForest([stateFactory, props], (localState) => {
     setTimeout(() => {
       if (!user) {
         state.do.noUser();
       }
-    }, 2000)
+    }, 2000);
+
+    const sub = dataManager.child('acts').subscribe(
+      (value) => {
+        const acts = c(value).getReduce((list, act) => {
+          if (act.project_id === props.projectId && act.active) {
+            list.push(act);
+          }
+          return list;
+        }, []);
+        localState.do.set_acts(acts);
+      })
+
+    return () => sub?.unsubscribe();
   });
 
   useEffect(() => {
@@ -63,13 +43,13 @@ export default function ProjectEdit(props: ProjectEditProps) {
     }
   }, [value, state, user])
 
-  const { loading, project, loaded } = value;
+  const { loading, project, loaded, acts } = value;
 
   return (<Box layerStyle="page-frame">
     <Box layerStyle="page-frame-inner">
       <Heading variant="page-head-with-sub">Edit Project</Heading>
       <Heading variant="page-subhead" fontSize="xs">{props.projectId}</Heading>
-      <ProjectTicket loaded={loaded} loafing={loading} project={project}/>
+      <ProjectTicket loaded={loaded} loafing={loading} project={project} acts={acts}/>
     </Box>
 
   </Box>);

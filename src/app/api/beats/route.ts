@@ -16,15 +16,15 @@ export async function POST(req, {params}) {
   const user = data?.session.user;
   console.log('posting user -', data, user)
   if (!user) {
-    return NextResponse.json({ project: null })
+    return NextResponse.json({ beats: null })
   }
 
-  const project = await req.json();
-  console.log('creating project', project);
+  const { beats } = await req.json();
+  console.log('creating beats', beats);
 // @TODO: check for duplicates
   const response = await supabase
-    .from('projects')
-    .insert({...project, user_id: user.id})
+    .from('beats')
+    .insert(beats.map((beat) => ({...beat, user_id: user.id})))
     .select();
 
 
@@ -36,12 +36,11 @@ export async function POST(req, {params}) {
   }
 
   const {
-    error, data: newProjects
+    error, data: newBeats
   } = response;
 
-  if (Array.isArray(newProjects)) {
-    const [newProject] = newProjects
-    return NextResponse.json({ project: newProject });
+  if (Array.isArray(newBeats)) {
+    return NextResponse.json({ beats: newBeats });
   }
   if (error) {
     return NextResponse.json({ error });

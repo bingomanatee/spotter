@@ -5,7 +5,7 @@ import { NextResponse } from 'next/server'
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function POST(req, {params}) {
+export async function POST(req) {
   const supabase = createRouteHandlerClient({ cookies });
   const { data, error: authError } = await supabase.auth.getSession()
 
@@ -14,17 +14,32 @@ export async function POST(req, {params}) {
   }
 
   const user = data?.session.user;
-  console.log('posting user -', data, user)
+
   if (!user) {
-    return NextResponse.json({ project: null })
+    return NextResponse.json({ act: null })
   }
 
-  const project = await req.json();
-  console.log('creating project', project);
+  const act = await req.json();
+
+  const { data: otherActs } = await supabase
+    .from('acts')
+    .select()
+    .eq('project_id', act.project_id);
+
+  console.log('other acts:', otherActs);
+
+  let order = otherActs.reduce((order, act) => {
+    if (act.order && act.order > order) {
+      return act.order;
+    }
+    return order;
+  }, 0) + 1;
+
+  console.log('creating act', act);
 // @TODO: check for duplicates
   const response = await supabase
-    .from('projects')
-    .insert({...project, user_id: user.id})
+    .from('acts')
+    .insert({...act, user_id: user.id, order})
     .select();
 
 
@@ -36,12 +51,12 @@ export async function POST(req, {params}) {
   }
 
   const {
-    error, data: newProjects
+    error, data: newActs
   } = response;
 
-  if (Array.isArray(newProjects)) {
-    const [newProject] = newProjects
-    return NextResponse.json({ project: newProject });
+  if (Array.isArray(newActs)) {
+    const [newAct] = newActs
+    return NextResponse.json({ act: newAct });
   }
   if (error) {
     return NextResponse.json({ error });

@@ -5,46 +5,47 @@ import { NextResponse } from 'next/server'
 export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
-export async function POST(req, {params}) {
+export async function GET(req, { params }) {
+  console.log('--------------------------  get acts:', params, req.method);
+
+  if (!params?.pid) {
+    return NextResponse.json({ apiError: 'no project id' })
+  }
+
   const supabase = createRouteHandlerClient({ cookies });
   const { data, error: authError } = await supabase.auth.getSession()
 
   if (authError) {
-    return NextResponse.json({authError})
+    return NextResponse.json({ authError })
   }
 
   const user = data?.session.user;
-  console.log('posting user -', data, user)
   if (!user) {
     return NextResponse.json({ project: null })
   }
 
-  const project = await req.json();
-  console.log('creating project', project);
+  // ------------ validated user and id
+
 // @TODO: check for duplicates
   const response = await supabase
-    .from('projects')
-    .insert({...project, user_id: user.id})
-    .select();
+    .from('acts')
+    .select(`
+    *, beats(*)`)
+    .eq('project_id', params.pid)
 
-
-  console.log('-=-- response:', response);
+  console.log('------------- acts get', params, ' response', response);
 
   if (!response) {
     console.error('back response:', response);
-    return NextResponse.json({ response });
+    return NextResponse.json({ bad: true });
   }
 
   const {
-    error, data: newProjects
+    error, data: acts
   } = response;
-
-  if (Array.isArray(newProjects)) {
-    const [newProject] = newProjects
-    return NextResponse.json({ project: newProject });
-  }
   if (error) {
     return NextResponse.json({ error });
   }
-  return NextResponse.json({ error: 'irregular return' })
+
+  return NextResponse.json({ acts });
 }

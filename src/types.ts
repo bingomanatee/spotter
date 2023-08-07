@@ -20,7 +20,7 @@ export type NewBeat = {
   name: string,
   duration: number,
   content: string,
-  cameraAngle: string,
+  camera_angle: string,
   notes: string,
   order?: number,
   act_id?: string,

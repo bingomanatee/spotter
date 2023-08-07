@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect id="edit-button" x="0" y="0" width="24" height="24" style="fill:none;"/>
+    <g id="edit-button1" serif:id="edit-button">
+        <circle cx="12" cy="12" r="12" style="fill:url(#_Linear1);"/>
+        <g>
+            <path d="M8.376,3.133C8.008,2.766 7.51,2.559 6.99,2.559C6.47,2.559 5.971,2.766 5.603,3.133C5.213,3.524 4.785,3.952 4.381,4.355C3.948,4.789 3.704,5.377 3.704,5.99C3.704,6.603 3.948,7.19 4.381,7.624C7.515,10.757 14.061,17.303 14.061,17.303L18.303,13.061C18.303,13.061 11.396,6.154 8.376,3.133Z"/>
+            <path d="M14.768,18.01L19.01,13.768L19.01,22.253L14.768,18.01Z"/>
+        </g>
+    </g>
+    <defs>
+        <linearGradient id="_Linear1" x1="0" y1="0" x2="1" y2="0" gradientUnits="userSpaceOnUse" gradientTransform="matrix(23.5,0,0,23.5,0.5,12.5)"><stop offset="0" style="stop-color:#fff;stop-opacity:1"/><stop offset="1" style="stop-color:#c9a134;stop-opacity:1"/></linearGradient>
+    </defs>
+</svg>

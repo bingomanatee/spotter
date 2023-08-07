@@ -4,6 +4,7 @@ import BeatModel from '~/utils/BeatModel'
 import dayjs from 'dayjs'
 import { DURATION } from '~/consts'
 import { dataManager } from '~/lib/dataManager'
+import NewBeatModalState from '~/components/pages/NewBeatModal/NewBeatModal.state'
 
 export type NewActModalStateValue = {
   name: string,
@@ -15,7 +16,7 @@ type leafType = typedLeaf<NewActModalStateValue>;
 function newBeat(name) {
   return {
     name,
-    cameraAngle: 'front medium',
+    camera_angle: 'front medium',
     duration: 10,
     content: '',
     notes: '',
@@ -44,18 +45,10 @@ const NewActModalState = (props) => {
     },
 
     actions: {
-      setNewBeatField(state: leafType, e: MouseEvent, index: number, field: string) {
+      updateBeat(state: leafType, index: number, data: NewBeat) {
+        const beat = state.value.newBeats[index];
         const newBeats = [...state.value.newBeats];
-        const newBeat = newBeats[index];
-        if (!newBeat) {
-          return;
-        }
-
-        let value = e.target.value;
-        if (field === DURATION) {
-          value = Number(value);
-        }
-        newBeats[index] = { ...newBeat, [field]: value }
+        newBeats[index] = {...beat, ...data};
         state.do.set_newBeats(newBeats);
       },
       close(state: leafType) {

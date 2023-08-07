@@ -32,7 +32,7 @@ function ActBeats({ actId }: { actId: number }) {
           </Td>
           <Td border="none" p={0} verticalAlign="top" rowSpan={2}><Text textStyle="runsheet">{beat.time}</Text></Td>
           <Td border="none" p={0} verticalAlign="top"><Text textStyle="runsheet">{beat.name}</Text></Td>
-          <Td border="none" p={0} verticalAlign="top"><Text textStyle="runsheet">{beat.cameraAngle}</Text></Td>
+          <Td border="none" p={0} verticalAlign="top"><Text textStyle="runsheet">{beat.camera_angle}</Text></Td>
 
         </Tr>
         <Tr>

@@ -1,5 +1,5 @@
 import { leafI, typedLeaf } from '@wonderlandlabs/forest/lib/types'
-import { Act, Project, User } from '~/types'
+import { Act, Beat, Project, User } from '~/types'
 import { dataManager } from '~/lib/dataManager'
 import { ProjectEditProps } from '~/app/project/[pid]/types'
 import { c } from '@wonderlandlabs/collect'
@@ -8,6 +8,7 @@ export type ProjectEditStateValue = {
   notLoggedIn: boolean,
   loading: boolean,
   loaded: boolean,
+  beats: Map<string, Beat[]>
   project: Project | null,
   user: User | null,
   acts: Act[]
@@ -20,8 +21,10 @@ const ProjectEditState = (props: ProjectEditProps) => {
     acts: [],
     loading: false,
     notLoggedIn: false,
-    loaded: false, project: null,
-    user: null
+    loaded: false,
+    project: null,
+    user: null,
+    beats: new Map()
   };
   return {
     name: "ProjectEdit",
@@ -32,7 +35,7 @@ const ProjectEditState = (props: ProjectEditProps) => {
     actions: {
       async getProject(state: leafType) {
         console.log('ProjectEdit: getting project for ', props);
-       await dataManager.do.loadProject(props.projectId);
+        await dataManager.do.loadProject(props.projectId);
         state.do.set_project(dataManager.child('projects')!.value.get(props.projectId));
         const acts = c(dataManager.child('acts')!.value)
           .getReduce((list, act) => {
@@ -42,7 +45,7 @@ const ProjectEditState = (props: ProjectEditProps) => {
             return list;
           }, []);
         state.do.set_acts(acts);
-     //@TODO: get acts, beats
+        //@TODO: get acts, beats
         state.do.set_loaded(true);
       },
       load(state: leafType, user: User) {

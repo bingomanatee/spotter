@@ -2,6 +2,8 @@ import { Act, Beat, isNewBeat, NewAct, NewBeat, NewProject, Project } from '~/ty
 import { typedLeaf } from '@wonderlandlabs/forest/lib/types'
 import { Forest } from '@wonderlandlabs/forest'
 import axios from 'axios'
+import { c } from '@wonderlandlabs/collect'
+import { sortBy } from 'lodash';
 
 export type ProjectsStateValue = Map<string, Project>
 type projectValueType = typedLeaf<ProjectsStateValue>;
@@ -27,18 +29,18 @@ export const dataManager = new Forest({
         return;
       }
       await state.child('projects')!.do.fetch(projectId);
-      await state.child('acts')!.do.load(projectId);
+      await state.child('acts')!.do.load(projectId); // also asserts beats
     },
     async newActAndBeats(state: dmLeaf, act: NewAct, beats?: NewBeat[]) {
       if (!act.project_id) {
-        console.error('cannot create new act withouot project id:', act);
+        console.error('cannot create new act withoot project id:', act);
         return;
       }
       const savedAct = await state.child('acts')!.do.create(act);
-     /* const goodBeats = beats.filter(beat => isNewBeat(beat));
+      const goodBeats = beats.filter(beat => isNewBeat(beat));
       if (goodBeats?.length && savedAct?.id) {
         await state.child('beats')!.do.createMany(goodBeats, savedAct.id);
-      }*/
+      }
       state.do.loadProject(act.project_id);
       return savedAct;
     }
@@ -92,8 +94,15 @@ export const dataManager = new Forest({
           }
           const { data } = await axios.get(`/api/acts/${projectId}`);
           console.log('--- data from acts load:', data)
-          if (Array.isArray(data.acts)) {
-            state.value = data.acts.reduce((memo, record) => {
+          const { acts } = data;
+          if (Array.isArray(acts)) {
+            acts.forEach((act) => {
+              act.beats.forEach((beat) => {
+                dataManager.child('beats')!.set(beat.id, beat);
+              })
+              delete act.beats;
+            });
+            state.value = acts.reduce((memo, record) => {
               if (record.active) {
                 memo.set(record.id, record);
               } else {
@@ -114,10 +123,13 @@ export const dataManager = new Forest({
           return data.act;
         },
         async create(state: actValueType, newAct: NewAct) {
-          const { data: act } = await axios.post('/api/act', newAct)
+          const { data: { act } } = await axios.post('/api/act', newAct);
+
+          console.log('new act is ', act);
           if (act?.id) {
             state.set(act.id, act);
           }
+          return act;
         }
       }
     },
@@ -125,7 +137,7 @@ export const dataManager = new Forest({
       $value: beatsValue,
       actions: {
         async load(state: beatValueType, actId: string) {
-          const { data } = await axios.post(`/api/beats/${actId}`);
+          const { data } = await axios.get(`/api/beats/${actId}`);
           if (Array.isArray(data?.beats?.data)) {
             state.value = data.beats.data.reduce((memo, record) => {
               if (record.active) {
@@ -148,20 +160,22 @@ export const dataManager = new Forest({
             state.set(beat.id, beat);
           }
         },
-        async createMany(state: beatValueType, beats: NewBeat[], actId?: string) {
-          if (actId) {
-            return state.do.createMany(beats.map((beat) => ({ ...beat, act_id: actId })));
-          }
-          if (!beats.every((beat) => beat.act_id && beat.name)) {
-            console.error('bad beats in createMany', beats)
-            throw new Error('creatMany: bad beats');
-          }
-          const { data } = await axios.post('/api/beats', { beats })
+        async createMany(state: beatValueType, beats: NewBeat[], actId: string) {
+         const  newBeats = beats.map((beat) => ({ ...beat, act_id: actId }));
+          const { data } = await axios.post(`/api/beats/${actId}`, { beats: newBeats })
           if (Array.isArray(data.beats)) {
             data.beats.forEach((beat) => {
               state.set(beat.id, beat);
             });
           }
+        }
+      },
+      selectors: {
+        forAct(state: beatValueType, actId: string) {
+          return sortBy(c(state.value)
+            .clone()
+            .filter((beat) => beat.act_id === actId && beat.active)
+            .values, 'order');
         }
       }
     },

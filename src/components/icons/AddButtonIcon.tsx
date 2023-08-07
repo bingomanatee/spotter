@@ -16,7 +16,7 @@ const AddButtonIcon = () => <svg width="100%" height="100%" viewBox="0 0 24 24" 
       <g id="add-button" >
         <g transform="matrix(1.08333,0,0,1.0625,-8.41667,0)">
           <ellipse cx={118.5} cy={12} rx={11.5} ry={12} style={{
-            fill: "url(#_Linear1)"
+            fill: "currentcolor"
           }}/>
         </g>
         <g transform="matrix(1.08333,0,0,1.0625,-2.72917,32.6719)">
@@ -32,19 +32,6 @@ const AddButtonIcon = () => <svg width="100%" height="100%" viewBox="0 0 24 24" 
       </g>
     </g>
   </g>
-  <defs>
-    <linearGradient id="_Linear1" x1={0} y1={0} x2={1} y2={0} gradientUnits="userSpaceOnUse"
-                    gradientTransform="matrix(-23.9583,3.06162e-15,-2.93405e-15,-25,130.479,6)">
-      <stop offset={0} style={{
-        stopColor: "currentcolor",
-        stopOpacity: 1
-      }}/>
-      <stop offset={1} style={{
-        stopColor: "white",
-        stopOpacity: 1
-      }}/>
-    </linearGradient>
-  </defs>
 </svg>;
 ;
 export default AddButtonIcon;

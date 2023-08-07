@@ -30,7 +30,7 @@ export default function NewBeatModal(props: NewBeatModalProps) {
   const { isOpen, act, beat } = value;
 
   const [name, setName] = useForestInput(state, NAME);
-  const [cameraAngle, setCA] = useForestInput(state, CAMERA_ANGLE);
+  const [camera_angle, setCA] = useForestInput(state, CAMERA_ANGLE);
   const [content, setContent] = useForestInput<HTMLTextAreaElement>(state, CONTENT);
   const [notes, setNotes] = useForestInput<HTMLTextAreaElement>(state, 'notes');
   const [duration, setDuration] = useForestInput(state, DURATION);
@@ -62,7 +62,7 @@ export default function NewBeatModal(props: NewBeatModalProps) {
               <Textarea value={notes} onChange={setNotes} />
 
               <Text textStyle="label">Camera Angle</Text>
-              <Input value={cameraAngle} onChange={setCA} />
+              <Input value={camera_angle} onChange={setCA} />
             </div>
           </ModalBody>
           <ModalFooter>

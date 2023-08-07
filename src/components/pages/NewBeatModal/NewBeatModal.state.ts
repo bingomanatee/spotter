@@ -18,7 +18,7 @@ export type NewBeatModalStateValue = {
   name: string,
   content: string,
   notes: string,
-  cameraAngle: string,
+  camera_angle: string,
 };
 
 type leafType = typedLeaf<NewBeatModalStateValue>;
@@ -34,7 +34,7 @@ const NewBeatModalState = (props: NewBeatModalProps) => {
     name: '',
     content: '',
     notes: '',
-    cameraAngle: ''
+    camera_angle: ''
   };
   return {
     name: "NewBeatModal",
@@ -54,7 +54,7 @@ const NewBeatModalState = (props: NewBeatModalProps) => {
 
     actions: {
       addBeat(state: leafType) {
-        const { content, notes, duration, act, beat, name, cameraAngle } = state.value;
+        const { content, notes, duration, act, beat, name, camera_angle } = state.value;
         console.log('addBeat: with ', beat, act, name, content);
 
         if (!act) {
@@ -74,7 +74,7 @@ const NewBeatModalState = (props: NewBeatModalProps) => {
         const startTime = prevTime.end;
         const endTime = startTime.add(duration, 'seconds');
         const time = `${startTime.format('m:ss')}-${endTime.format('m:ss')}`;
-        const newBeat = { name, content, notes, time, cameraAngle };
+        const newBeat = { name, content, notes, time, camera_angle };
         console.log('---- adding new beat', newBeat);
         actState.do.addBeat(act.id, newBeat)
         state.do.close();

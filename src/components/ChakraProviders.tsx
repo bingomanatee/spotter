@@ -66,7 +66,9 @@ const PREVIS_TITLE = {
 const COLORS = {
   accent: 'hsl(30,100%,50%)',
   'add-green': 'hsl(170,100%,30%)',
-  'add-green-disabled': 'hsla(170,50%,30%, 50%)',
+  'edit-yellow': 'hsl(68,80%,60%)',
+  'add-green-disabled': 'hsla(170,100%,30%, 33%)',
+  'edit-yellow-disabled': 'hsla(68,100%,60%, 33%)',
   'delete': 'hsl(0,100%,39%)',
   'add-green-dark': 'hsl(170,100%,15%)',
   'dark-accent': 'hsl(30,100%,33%)',
@@ -91,8 +93,7 @@ const COMPONENTS = {
     baseStyle: {
       textTransform: 'uppercase',
       fontWeight: 300,
-      px: '8px',
-      py: '2px',
+      p: 0,
       borderRadius: '0.333em',
       lineHeight: '100%',
       _hover: {
@@ -101,6 +102,14 @@ const COMPONENTS = {
     },
 
     variants: {
+      'edit-type-button': {
+        backgroundColor: "white",
+        alignItems: "center",
+        p: 1,
+        lineHeight: 1,
+        h: "auto",
+        sx: { paddingInlineStart: 0, paddingInlineEnd: 0 }
+      },
       'previs-button': {
         size: 'sm',
         fontSize: 'xs',
@@ -209,6 +218,20 @@ const COMPONENTS = {
       'beat-previs-title': {
         ...PREVIS_TITLE
       },
+      'atb-duration': {
+        fontWeight: 300,
+        m: 0,
+        size: "lg",
+        p: 0,
+        lineHeight: '90%',
+      },
+      'atb-name': {
+        as: 'h4',
+        sie: 'md',
+        fontSize: 'sm',
+        noOfLines: 1,
+        pt: 1,
+      },
       'act-head': {
         level: 3,
         sie: 'md',
@@ -232,9 +255,32 @@ const COMPONENTS = {
     }
   },
   Text: {},
+  Avatar: {
+    variants: {
+      order: {
+        position: 'absolute',
+        left: '3px',
+        bottom: '3px',
+        size: "sm",
+        backgroundColor:"blackAlpha.200",
+        color:"black"
+      }
+    }
+  }
 };
 const TEXT_STYLES = {
-
+  'atb-title-sub': {
+    m: 0,
+    p: 0,
+    fontSize: 'xs',
+  },
+  'act-order': {
+    position: 'absolute',
+    left: 2,
+    bottom: 1,
+    width: '50px',
+    fontSize: 'sm',
+  },
   'list-item-head': {
     as: 'section',
     px: 4,
@@ -328,9 +374,22 @@ const LAYER_STYLES = {
     py: 2,
     my: 0.5,
     boxShadow: 'lg',
+    position: 'relative',
+    minHeight: '100px',
     w: '100%'
   },
-
+  'act-ticket-beat-outer': {
+    borderWidth: '2px',
+    borderStyle: 'solid',
+    borderRadius: '5px',
+    px: 4,
+    maxWidth: '250px',
+    ml: 2
+  },
+  'act-ticket-beat': {
+    p: 1,
+    alignItems: 'center',
+  },
   'runsheet-cell': {
     p: 0,
     m: 0

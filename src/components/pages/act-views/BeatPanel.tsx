@@ -64,7 +64,7 @@ export function BeatPanel({ beat, actId }: { beat: Beat, actId: number }) {
         <BeatPanelDelete actId={actId} beat={beat}/>
         <Text display="none" textStyle="previs-id">{beat.id}</Text>
         <Heading variant="beat-previs-title">{beat.name}
-          {beat.cameraAngle ? <small><br/>{beat.cameraAngle}</small> : null}
+          {beat.camera_angle ? <small><br/>{beat.camera_angle}</small> : null}
         </Heading>
         <Text textStyle="previs-content">{beat.content}</Text>
         <Button variant="previs-button" onClick={onOpen} left="0" bottom="0">Image</Button>

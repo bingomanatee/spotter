@@ -40,8 +40,8 @@ export default class BeatModel {
     return this.beat?.name || '';
   }
 
-  get cameraAngle(): string {
-    return this.beat?.cameraAngle || '';
+  get camera_angle(): string {
+    return this.beat?.camera_angle || '';
   }
 
   get content(): string {

@@ -22,7 +22,7 @@ export default function ProjectEdit(props: ProjectEditProps) {
       }
     }, 2000);
 
-    const sub = dataManager.child('acts').subscribe(
+    const sub = dataManager.child('acts')!.subscribe(
       (value) => {
         const acts = c(value).getReduce((list, act) => {
           if (act.project_id === props.projectId && act.active) {
@@ -31,9 +31,28 @@ export default function ProjectEdit(props: ProjectEditProps) {
           return list;
         }, []);
         localState.do.set_acts(acts);
-      })
+      });
 
-    return () => sub?.unsubscribe();
+    const sub2 = dataManager.child('beats')!.subscribe(
+      (value) => {
+
+        const beats = c(value).getReduce((list, beat) => {
+          if (list.has(beat.act_id)) {
+            list.get(beat.act_id).push(beat);
+          } else {
+            list.set(beat.act_id, [beat])
+          }
+          return list;
+        }, new Map());
+        console.log('beats:', beats, 'from props', props);
+        localState.do.set_beats(beats)
+      }
+    )
+
+    return () => {
+      sub?.unsubscribe();
+      sub2?.unsubscribe()
+    };
   });
 
   useEffect(() => {
@@ -43,13 +62,17 @@ export default function ProjectEdit(props: ProjectEditProps) {
     }
   }, [value, state, user])
 
-  const { loading, project, loaded, acts } = value;
+  const { loading, project, loaded, acts, beats } = value;
 
   return (<Box layerStyle="page-frame">
     <Box layerStyle="page-frame-inner">
       <Heading variant="page-head-with-sub">Edit Project</Heading>
       <Heading variant="page-subhead" fontSize="xs">{props.projectId}</Heading>
-      <ProjectTicket loaded={loaded} loafing={loading} project={project} acts={acts}/>
+      <ProjectTicket loaded={loaded}
+                     loading={loading}
+                     project={project}
+                     beats={beats}
+                     acts={acts}/>
     </Box>
 
   </Box>);
